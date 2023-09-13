@@ -1,0 +1,13 @@
+.movies_card{
+    display: flex;
+    width: 70%;
+    margin-right: auto;
+    margin-left: auto;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 10px;
+}
+
+.content{
+    margin-top: 20%;
+}

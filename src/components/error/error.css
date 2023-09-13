@@ -1,0 +1,12 @@
+.error{
+    margin-top: 20%;
+    margin-bottom: 300px;
+}
+
+.error_message{
+    box-shadow: 3px 4px 3px rgba(234, 47, 47, 0.54);
+}
+
+.warning_message{
+    box-shadow: 3px 4px 3px rgba(218, 129, 27, 0.54);
+}
