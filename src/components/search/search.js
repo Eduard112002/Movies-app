@@ -24,14 +24,3 @@ export default class Search extends Component {
     );
   }
 }
-
-/*
- const debounce = (fn, debounceTime) => {
-   let id;
-   return function(...el){
-      clearTimeout(id, debounceTime)
-        id = setTimeout(()=>{
-           fn.call(this, ...el)
-        }, debounceTime);
-   }
-};*/
