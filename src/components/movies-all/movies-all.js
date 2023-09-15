@@ -7,6 +7,7 @@ import CardList from '../card-list';
 import PaginationList from '../pagination-list';
 import Search from '../search';
 import Error from '../error';
+import Tabs from '../tabs';
 
 export default class MoviesAll extends Component {
   server = new Services();
@@ -18,6 +19,8 @@ export default class MoviesAll extends Component {
     loading: true,
     error: false,
     isOnline: false,
+    search: true,
+    rated: false,
   };
 
   addListFilm = (results) => {
@@ -32,6 +35,26 @@ export default class MoviesAll extends Component {
     this.setState({
       title: title,
       current: 1,
+    });
+  };
+
+  addSearch = () => {
+    this.setState(({ search, rated, current, title }) => {
+      this.addLIstServers(current, title);
+      return {
+        search: !search,
+        rated: !rated,
+      };
+    });
+  };
+
+  addRated = () => {
+    this.setState(({ rated, search }) => {
+      this.server.getRatedMovies().then((results) => this.addListFilm(results));
+      return {
+        rated: !rated,
+        search: !search,
+      };
     });
   };
 
@@ -51,6 +74,7 @@ export default class MoviesAll extends Component {
 
   currentPage = (current) => {
     const { title } = this.state;
+    this.server.getId();
     this.addLIstServers(current, title);
     this.setState({
       current: current,
@@ -60,6 +84,7 @@ export default class MoviesAll extends Component {
   componentDidMount() {
     const { current, title } = this.state;
     this.addLIstServers(current, title);
+    this.server.createGuestSession();
   }
 
   addLIstServers = (current, title) => {
@@ -69,7 +94,7 @@ export default class MoviesAll extends Component {
       .catch(() => this.addError());
   };
   render() {
-    const { listFilm, current, error, isOnline, loading, title } = this.state;
+    const { listFilm, current, error, isOnline, loading, title, search, rated } = this.state;
     const totalList = listFilm.length < 20 ? current : null;
     const newTitle = `There is no such movie: ${title}`;
     const spiner = loading ? (
@@ -79,18 +104,18 @@ export default class MoviesAll extends Component {
     ) : null;
     const Pagination =
       error || isOnline ? null : <PaginationList cur={current} currentPage={this.currentPage} total={totalList} />;
-    const search = error || isOnline ? null : <Search addTitle={this.addTitle} />;
+    const inputSearch = error || isOnline ? null : <Search addTitle={this.addTitle} />;
     const constentList =
       listFilm.length === 0 ? (
         <Alert message="Warning" description={newTitle} type="warning" className="error warning_message" showIcon />
       ) : (
         <CardList listFilm={listFilm} />
       );
-
     const content = error || isOnline || loading ? null : constentList;
     return (
       <>
-        {search}
+        <Tabs addSearch={this.addSearch} addRated={this.addRated} search={search} rated={rated} />
+        {inputSearch}
         <div className="movies_card">
           <Error error={error} addIsOnline={this.addIsOnline} addError={this.addError} />
           {spiner}

@@ -21,4 +21,37 @@ export default class Services {
     const res = await this.getListService(current, title);
     return res.results;
   }
+
+  async createGuestSession() {
+    const resID = await fetch('https://api.themoviedb.org/3/authentication/guest_session/new', {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjNTliZDU4MTA1NWRmZjdlZjVjNWJjM2Q1ZDgzYjQwZCIsInN1YiI6IjY0Zjk5NWEyNGNjYzUwMTg2OGRhYWY4NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rHjOe79qNqjRa4Bh2siGFrYZS7v35gTI0Gx_o3dRebM',
+      },
+    });
+    return await resID.json();
+  }
+
+  async getId() {
+    const res = await this.createGuestSession();
+    return res.guest_session_id;
+  }
+
+  async getRatedMovies() {
+    const id = await this.getId();
+    const res = await fetch(
+      `https://api.themoviedb.org/3/account/${id}/rated/movies?language=en-US&page=1&sort_by=created_at.asc`,
+      {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjNTliZDU4MTA1NWRmZjdlZjVjNWJjM2Q1ZDgzYjQwZCIsInN1YiI6IjY0Zjk5NWEyNGNjYzUwMTg2OGRhYWY4NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rHjOe79qNqjRa4Bh2siGFrYZS7v35gTI0Gx_o3dRebM',
+        },
+      }
+    ).then((response) => response.json());
+    return res.results;
+  }
 }
