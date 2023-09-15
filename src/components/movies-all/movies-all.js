@@ -104,7 +104,7 @@ export default class MoviesAll extends Component {
     ) : null;
     const Pagination =
       error || isOnline ? null : <PaginationList cur={current} currentPage={this.currentPage} total={totalList} />;
-    const inputSearch = error || isOnline ? null : <Search addTitle={this.addTitle} />;
+    const inputSearch = error || isOnline || !search ? null : <Search addTitle={this.addTitle} />;
     const constentList =
       listFilm.length === 0 ? (
         <Alert message="Warning" description={newTitle} type="warning" className="error warning_message" showIcon />
