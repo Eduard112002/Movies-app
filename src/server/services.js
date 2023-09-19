@@ -52,8 +52,7 @@ export default class Services {
         },
       }
     ).then((response) => response.json());
-    console.log(res.total_pages);
-    return res.results;
+    return [res.results, res.total_pages];
   }
 
   async addRating(page, id) {
