@@ -39,10 +39,10 @@ export default class Services {
     return res.guest_session_id;
   }
 
-  async getRatedMovies() {
+  async getRatedMovies(current) {
     const id = await this.getId();
     const res = await fetch(
-      `https://api.themoviedb.org/3/account/${id}/rated/movies?language=en-US&page=1&sort_by=created_at.asc`,
+      `https://api.themoviedb.org/3/account/${id}/rated/movies?language=en-US&page=${current}&sort_by=created_at.asc`,
       {
         method: 'GET',
         headers: {
@@ -52,6 +52,22 @@ export default class Services {
         },
       }
     ).then((response) => response.json());
+    console.log(res.total_pages);
     return res.results;
+  }
+
+  async addRating(page, id) {
+    await fetch(`https://api.themoviedb.org/3/movie/${id}/rating`, {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json;charset=utf-8',
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjNTliZDU4MTA1NWRmZjdlZjVjNWJjM2Q1ZDgzYjQwZCIsInN1YiI6IjY0Zjk5NWEyNGNjYzUwMTg2OGRhYWY4NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rHjOe79qNqjRa4Bh2siGFrYZS7v35gTI0Gx_o3dRebM',
+      },
+      body: JSON.stringify({
+        value: page,
+      }),
+    });
   }
 }

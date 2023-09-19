@@ -34,6 +34,22 @@
     line-height: 30px;
 }
 
+.red{
+    border: 2px #E90000 solid;
+}
+
+.orange{
+    border: 2px #E97E00 solid;
+}
+
+.yellow{
+    border: 2px #E9D100 solid;
+}
+
+.green{
+    border: 2px #66E900 solid;
+}
+
 .card_title{
    margin-top: 9px;
    margin-bottom: 15px;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Spin } from 'antd';
+import { Alert, Spin, Space } from 'antd';
 
 import './movies-all.css';
 import Services from '../../server';
@@ -14,6 +14,7 @@ export default class MoviesAll extends Component {
 
   state = {
     listFilm: [],
+    ratedMovies: [],
     current: 1,
     title: '',
     loading: true,
@@ -24,8 +25,20 @@ export default class MoviesAll extends Component {
   };
 
   addListFilm = (results) => {
+    const { ratedMovies } = this.state;
+    const newArr = results.map((el) => {
+      const rated = ratedMovies.find((element) => element.id === el.id);
+      return rated ? rated : el;
+    });
     this.setState({
-      listFilm: results,
+      listFilm: newArr,
+      loading: false,
+    });
+  };
+
+  addRatedMovies = (results) => {
+    this.setState({
+      ratedMovies: results,
       loading: false,
     });
   };
@@ -44,16 +57,20 @@ export default class MoviesAll extends Component {
       return {
         search: !search,
         rated: !rated,
+        loading: true,
+        current: 1,
       };
     });
   };
 
   addRated = () => {
-    this.setState(({ rated, search }) => {
-      this.server.getRatedMovies().then((results) => this.addListFilm(results));
+    this.setState(({ rated, search, current }) => {
+      this.addListRated(current);
       return {
         rated: !rated,
         search: !search,
+        current: 1,
+        loading: true,
       };
     });
   };
@@ -73,19 +90,24 @@ export default class MoviesAll extends Component {
   };
 
   currentPage = (current) => {
-    const { title } = this.state;
+    const { title, rated } = this.state;
+    rated ? this.addListRated(current) : this.addLIstServers(current, title);
     this.server.getId();
-    this.addLIstServers(current, title);
     this.setState({
       current: current,
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { current, title } = this.state;
-    this.addLIstServers(current, title);
-    this.server.createGuestSession();
+    await this.addListRated(current);
+    await this.addLIstServers(current, title);
+    await this.server.createGuestSession();
   }
+
+  addListRated = (current) => {
+    this.server.getRatedMovies(current).then((results) => this.addRatedMovies(results));
+  };
 
   addLIstServers = (current, title) => {
     this.server
@@ -94,22 +116,26 @@ export default class MoviesAll extends Component {
       .catch(() => this.addError());
   };
   render() {
-    const { listFilm, current, error, isOnline, loading, title, search, rated } = this.state;
-    const totalList = listFilm.length < 20 ? current : null;
+    const { listFilm, current, error, isOnline, loading, title, search, rated, ratedMovies } = this.state;
+    const contentsListMovie = rated ? ratedMovies : listFilm;
+    const totalList = contentsListMovie.length < 20 ? current * 10 : null;
     const newTitle = `There is no such movie: ${title}`;
+    console.log(contentsListMovie);
     const spiner = loading ? (
-      <Spin tip="Loading" size="large">
-        <div className="content" />
-      </Spin>
+      <Space size="middle">
+        <Spin size="large" />
+      </Space>
     ) : null;
     const Pagination =
-      error || isOnline ? null : <PaginationList cur={current} currentPage={this.currentPage} total={totalList} />;
+      error || isOnline || loading ? null : (
+        <PaginationList cur={current} currentPage={this.currentPage} total={totalList} />
+      );
     const inputSearch = error || isOnline || !search ? null : <Search addTitle={this.addTitle} />;
     const constentList =
-      listFilm.length === 0 ? (
+      contentsListMovie.length === 0 ? (
         <Alert message="Warning" description={newTitle} type="warning" className="error warning_message" showIcon />
       ) : (
-        <CardList listFilm={listFilm} />
+        <CardList listFilm={contentsListMovie} addRatedMovies={this.addRatedMovies} />
       );
     const content = error || isOnline || loading ? null : constentList;
     return (
