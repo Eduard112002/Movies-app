@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import './card.css';
 import RateMovies from '../rate-movies';
 
-const Card = ({ film, addRatedMovies, current, addlistRated }) => {
+const Card = ({ film, addRatedMovies, current, addlistRatedNewEl }) => {
   const img = film.poster_path === null ? '/xWjw5JBMuce6Wv33dDUfmzVVaAL.jpg' : film.poster_path;
   const [year, month, day] = film.release_date ? film.release_date.split('') : [2002, 1, 1];
   const newData = format(new Date(year, month, day), 'LLLL dd yyyy');
@@ -44,7 +44,7 @@ const Card = ({ film, addRatedMovies, current, addlistRated }) => {
           id={film.id}
           addRatedMovies={addRatedMovies}
           current={current}
-          addlistRated={addlistRated}
+          addlistRatedNewEl={addlistRatedNewEl}
         />
       </div>
     </div>

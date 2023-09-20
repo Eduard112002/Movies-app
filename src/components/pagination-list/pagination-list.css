@@ -6,3 +6,7 @@
     margin-right: auto;
     margin-bottom: 40px;
 }
+
+:where(.css-dev-only-do-not-override-18iikkb).ant-select-single{
+    display: none;
+}

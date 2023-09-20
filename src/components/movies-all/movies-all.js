@@ -24,6 +24,7 @@ export default class MoviesAll extends Component {
     search: true,
     rated: false,
     page: 1,
+    pageRated: null,
   };
 
   addListFilm = (results) => {
@@ -56,9 +57,8 @@ export default class MoviesAll extends Component {
   };
 
   addSearch = () => {
-    const { current, title } = this.state;
-    this.addLIstServers(current, title);
-    this.currentPage(1);
+    const { title } = this.state;
+    this.addLIstServers(1, title);
     this.setState(({ search, rated }) => {
       return {
         search: !search,
@@ -110,27 +110,39 @@ export default class MoviesAll extends Component {
     });
   };
 
-  addlistRated = (results, id) => {
-    const { page } = this.state;
-    if (page !== results[1] + 1) {
+  addlistRatedNewEl = (results, id) => {
+    const { listRated } = this.state;
+    let newElement;
+    const index = listRated.findIndex((el) => el.id === id);
+    if (index !== -1) {
+      const page = index === 0 ? 1 : Math.ceil(index / 20);
+      this.server.getRatedMovies(page).then((results) => {
+        newElement = results[0].find((el) => el.id === id);
+        const newlistRated = [...listRated.slice(0, index), newElement, ...listRated.slice(index + 1)];
+        this.setState({
+          listRated: newlistRated,
+        });
+      });
+    } else {
+      this.setState(({ listRated }) => {
+        newElement = results.find((el) => el.id === id);
+        return {
+          listRated: [...listRated, newElement],
+        };
+      });
+    }
+  };
+
+  addlistRated = (results) => {
+    const { page, listRated } = this.state;
+    if (Math.ceil(listRated.length / 20) !== results[1]) {
       this.setState(({ listRated }) => {
         const newPage = page + 1;
         this.server.getRatedMovies(newPage).then((results) => this.addlistRated(results));
         return {
+          pageRated: results[1],
           page: newPage,
           listRated: [...listRated, ...results[0]],
-        };
-      });
-    }
-    if (id) {
-      this.setState(({ listRated }) => {
-        const index = listRated.findIndex((el) => el.id === id);
-        const newElement = results[0].find((el) => el.id === id);
-        console.log(newElement, 'new Element');
-        const newlistRated = [...listRated.slice(0, index), newElement, ...listRated.slice(index + 1)];
-        console.log(newlistRated, 'newTyt');
-        return {
-          listRated: newlistRated,
         };
       });
     }
@@ -154,9 +166,8 @@ export default class MoviesAll extends Component {
       .catch(() => this.addError());
   }
   render() {
-    const { listFilm, current, error, isOnline, loading, title, search, rated, ratedMovies, listRated } = this.state;
+    const { listFilm, current, error, isOnline, loading, title, search, rated, ratedMovies, pageRated } = this.state;
     const contentsListMovie = rated ? ratedMovies : listFilm;
-    console.log(listRated);
     const totalList = contentsListMovie.length < 20 ? current * 10 : null;
     const newTitle = `There is no such movie: ${title}`;
     const spiner = loading ? (
@@ -166,7 +177,13 @@ export default class MoviesAll extends Component {
     ) : null;
     const Pagination =
       error || isOnline || loading ? null : (
-        <PaginationList cur={current} currentPage={this.currentPage} total={totalList} />
+        <PaginationList
+          cur={current}
+          currentPage={this.currentPage}
+          total={totalList}
+          rated={rated}
+          pageRated={pageRated}
+        />
       );
     const inputSearch = error || isOnline || !search ? null : <Search addTitle={this.addTitle} />;
     const constentList =
@@ -177,7 +194,7 @@ export default class MoviesAll extends Component {
           listFilm={contentsListMovie}
           addRatedMovies={this.addRatedMovies}
           current={current}
-          addlistRated={this.addlistRated}
+          addlistRatedNewEl={this.addlistRatedNewEl}
         />
       );
     const content = error || isOnline || loading ? null : constentList;
