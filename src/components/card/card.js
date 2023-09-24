@@ -38,7 +38,6 @@ class Card extends Component {
       </span>
     ));
     const genresContent = genres.length === 0 ? <span className="card_genre_none"></span> : genres;
-    console.log(genres);
     const rating = Math.floor(film.vote_average * 10) / 10;
     const imgCard = `https://image.tmdb.org/t/p/w500${img}`;
     const valueRate = film.rating ? film.rating : 0;
