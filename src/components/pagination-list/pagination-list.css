@@ -10,3 +10,9 @@
 :where(.css-dev-only-do-not-override-18iikkb).ant-select-single{
     display: none;
 }
+
+@media (max-width: 420px) {
+    .pagination{
+        width: 99%;
+    }
+}

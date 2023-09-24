@@ -2,7 +2,7 @@ import React from 'react';
 import './tabs.css';
 
 const Tabs = ({ addSearch, addRated, search, rated }) => {
-  let classNameSearch = 'tabs_element';
+  let classNameSearch = 'tabs_element tabs_search';
   let classNameRated = 'tabs_element';
 
   if (search) {
@@ -11,7 +11,7 @@ const Tabs = ({ addSearch, addRated, search, rated }) => {
   }
 
   if (rated) {
-    classNameSearch = 'tabs_element';
+    classNameSearch = 'tabs_element tabs_search';
     classNameRated += ' activ_tabs';
   }
 

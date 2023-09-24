@@ -37,6 +37,7 @@ class Card extends Component {
         {el.name}
       </span>
     ));
+    const genresContent = genres.length === 0 ? <span className="card_genre_none"></span> : genres;
     console.log(genres);
     const rating = Math.floor(film.vote_average * 10) / 10;
     const imgCard = `https://image.tmdb.org/t/p/w500${img}`;
@@ -63,7 +64,7 @@ class Card extends Component {
           <span className={classColor}>{rating}</span>
           <h3 className="card_title">{film.title}</h3>
           <span className="card_date">{newData}</span>
-          <div>{genres}</div>
+          <div className="genre">{genresContent}</div>
           <span className="card_text">{text}</span>
           <RateMovies valueRate={valueRate} id={film.id} addRatedMovies={addRatedMovies} current={current} />
         </div>

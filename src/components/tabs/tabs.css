@@ -10,7 +10,6 @@
     line-height: 22px;
     border: none;
     cursor: pointer;
-    margin-right: 15px;
     padding-bottom: 10px;
     background-color: white;
 }
@@ -18,4 +17,8 @@
 .activ_tabs{
     color: #1890FF;
     border-bottom: 3px #1890FF solid;
+}
+
+.tabs_search{
+    margin-right: 15px;
 }

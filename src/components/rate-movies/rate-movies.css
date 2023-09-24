@@ -1,8 +1,15 @@
 .rate{
     margin-top: auto;
-    margin-bottom: 15px;
+    margin-bottom: 15px
 }
 
 :where(.css-dev-only-do-not-override-18iikkb).ant-rate .ant-rate-star-second {
     color: rgba(173, 173, 173, 0.64);
+}
+
+@media (max-width: 420px) {
+    .rate{
+        display: flex;
+        justify-content: center;
+    }
 }

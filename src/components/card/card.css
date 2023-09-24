@@ -2,17 +2,33 @@
     display: flex;
     min-width: 45%;
     margin-bottom: 30px;
+    position: relative;
 }
 @media (min-width: 1450px) {
     .card{
         width: 0;
     }
 }
+
+@media (max-width: 420px) {
+    .card{
+        width: 387px;
+    }
+}
+
 .card_img{
     min-width: 180px;
     height: 280px;
 }
 
+@media (max-width: 420px) {
+    .card_img{
+        min-width: 60px;
+        height: 105px;
+        left: 5px;
+        position: absolute;
+    }
+}
 .card_info{
     display: flex;
     flex-direction: column;
@@ -20,6 +36,13 @@
     padding-left: 20px;
     box-shadow: 0 2px 1px rgba(158, 158, 158, 0.54);
     position: relative;
+}
+
+@media (max-width: 420px) {
+    .card_info{
+        width: 367px;
+        padding-left: 10px;
+    }
 }
 
 .card_rating{
@@ -57,11 +80,23 @@
     max-width: 70%;
 }
 
+@media (max-width: 420px) {
+    .card_title{
+        padding-left: 80px;
+    }
+}
+
 .card_date{
     margin-bottom: 10px;
     color: #a3a3a3;
     font-size: 14px;
     line-height: 22px;
+}
+
+@media (max-width: 420px) {
+    .card_date{
+        padding-left: 80px;
+    }
 }
 
 .card_genre{
@@ -74,9 +109,26 @@
     color: #808080;
 }
 
+@media (max-width: 420px) {
+    .genre{
+        padding-left: 80px;
+    }
+    .card_genre_none{
+        display: inline-block;
+        margin-bottom: 10px;
+        height: 25px;
+    }
+}
+
 .card_text{
     display: inline-block;
     margin-right: 5px;
     width: 19vw;
 }
 
+@media (max-width: 420px) {
+    .card_text{
+        width: 90%;
+        margin-bottom: 5px;
+    }
+}
