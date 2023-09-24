@@ -3,6 +3,7 @@ import { Alert, Spin, Space } from 'antd';
 
 import './movies-all.css';
 import Services from '../../server';
+import { ServerProvider } from '../server-context';
 import CardList from '../card-list';
 import PaginationList from '../pagination-list';
 import Search from '../search';
@@ -23,18 +24,12 @@ export default class MoviesAll extends Component {
     isOnline: false,
     search: true,
     rated: false,
-    page: 1,
     pageRated: null,
   };
 
   addListFilm = (results) => {
-    const { listRated } = this.state;
-    const newArr = results.map((el) => {
-      const rated = listRated.find((element) => element.id === el.id);
-      return rated ? rated : el;
-    });
     this.setState({
-      listFilm: newArr,
+      listFilm: results,
       loading: false,
     });
   };
@@ -43,6 +38,7 @@ export default class MoviesAll extends Component {
     this.setState(() => {
       return {
         ratedMovies: results[0],
+        pageRated: results[1],
         loading: false,
       };
     });
@@ -96,7 +92,6 @@ export default class MoviesAll extends Component {
   };
 
   currentPage = (current) => {
-    this.server.getId();
     this.setState(({ title, rated }) => {
       if (rated) {
         this.addListRated(current);
@@ -110,48 +105,10 @@ export default class MoviesAll extends Component {
     });
   };
 
-  addlistRatedNewEl = (results, id) => {
-    const { listRated } = this.state;
-    let newElement;
-    const index = listRated.findIndex((el) => el.id === id);
-    if (index !== -1) {
-      const page = index === 0 ? 1 : Math.ceil(index / 20);
-      this.server.getRatedMovies(page).then((results) => {
-        newElement = results[0].find((el) => el.id === id);
-        const newlistRated = [...listRated.slice(0, index), newElement, ...listRated.slice(index + 1)];
-        this.setState({
-          listRated: newlistRated,
-        });
-      });
-    } else {
-      this.setState(({ listRated }) => {
-        newElement = results.find((el) => el.id === id);
-        return {
-          listRated: [...listRated, newElement],
-        };
-      });
-    }
-  };
-
-  addlistRated = (results) => {
-    const { page, listRated } = this.state;
-    if (Math.ceil(listRated.length / 20) !== results[1]) {
-      this.setState(({ listRated }) => {
-        const newPage = page + 1;
-        this.server.getRatedMovies(newPage).then((results) => this.addlistRated(results));
-        return {
-          pageRated: results[1],
-          page: newPage,
-          listRated: [...listRated, ...results[0]],
-        };
-      });
-    }
-  };
-
   async componentDidMount() {
-    const { current, title, page } = this.state;
+    const { current, title } = this.state;
     await this.server.createGuestSession();
-    await this.server.getRatedMovies(page).then((results) => this.addlistRated(results));
+    await this.server.getId();
     await this.addLIstServers(current, title);
   }
 
@@ -190,42 +147,22 @@ export default class MoviesAll extends Component {
       contentsListMovie.length === 0 ? (
         <Alert message="Warning" description={newTitle} type="warning" className="error warning_message" showIcon />
       ) : (
-        <CardList
-          listFilm={contentsListMovie}
-          addRatedMovies={this.addRatedMovies}
-          current={current}
-          addlistRatedNewEl={this.addlistRatedNewEl}
-        />
+        <CardList listFilm={contentsListMovie} addRatedMovies={this.addRatedMovies} current={current} />
       );
     const content = error || isOnline || loading ? null : constentList;
     return (
       <>
-        <Tabs addSearch={this.addSearch} addRated={this.addRated} search={search} rated={rated} />
-        {inputSearch}
-        <div className="movies_card">
-          <Error error={error} addIsOnline={this.addIsOnline} addError={this.addError} />
-          {spiner}
-          {content}
-        </div>
-        {Pagination}
+        <ServerProvider value={this.server}>
+          <Tabs addSearch={this.addSearch} addRated={this.addRated} search={search} rated={rated} />
+          {inputSearch}
+          <div className="movies_card">
+            <Error error={error} addIsOnline={this.addIsOnline} addError={this.addError} />
+            {spiner}
+            {content}
+          </div>
+          {Pagination}
+        </ServerProvider>
       </>
     );
   }
 }
-/*
-const newArr = [];
-    if (listRated.length === 0) {
-      newArr.push(...resoltsArr);
-    } else {
-      for (let i = 0; i < listRated.length; i++) {
-        const rated = resoltsArr.filter((element) => element.id === listRated[i].id);
-        console.log(rated, 'rated');
-        let el = rated.length !== 0 ? rated : resoltsArr[i];
-        if (Array.isArray(el)) {
-          newArr.push(...el);
-        } else {
-          newArr.push(el);
-        }
-      }
-    }
- */

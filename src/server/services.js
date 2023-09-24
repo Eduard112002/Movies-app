@@ -1,4 +1,6 @@
-export default class Services {
+import { Component } from 'react';
+
+export default class Services extends Component {
   async getListService(current, title) {
     const titleDefault = title ? title : 'return';
     const url = `https://api.themoviedb.org/3/search/movie?query=${titleDefault}&include_adult=false&language=en-US&page=`;
@@ -34,13 +36,15 @@ export default class Services {
     return await resID.json();
   }
 
+  id = null;
+
   async getId() {
     const res = await this.createGuestSession();
-    return res.guest_session_id;
+    this.id = res.guest_session_id;
   }
 
   async getRatedMovies(current) {
-    const id = await this.getId();
+    const id = this.id;
     const res = await fetch(
       `https://api.themoviedb.org/3/account/${id}/rated/movies?language=en-US&page=${current}&sort_by=created_at.asc`,
       {
@@ -68,5 +72,17 @@ export default class Services {
         value: page,
       }),
     });
+  }
+
+  async getGenres() {
+    const res = await fetch('https://api.themoviedb.org/3/genre/movie/list?language=en', {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization:
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjNTliZDU4MTA1NWRmZjdlZjVjNWJjM2Q1ZDgzYjQwZCIsInN1YiI6IjY0Zjk5NWEyNGNjYzUwMTg2OGRhYWY4NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rHjOe79qNqjRa4Bh2siGFrYZS7v35gTI0Gx_o3dRebM',
+      },
+    }).then((response) => response.json());
+    return res.genres;
   }
 }
