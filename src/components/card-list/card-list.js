@@ -6,11 +6,9 @@ import { ServerConsumer } from '../server-context';
 const CardList = ({ listFilm, addRatedMovies, current }) => {
   return (
     <ServerConsumer>
-      {({ getGenres }) => {
+      {(genres) => {
         const elementCard = listFilm.map((el) => {
-          return (
-            <Card film={el} key={el.id} addRatedMovies={addRatedMovies} current={current} genresId={getGenres()} />
-          );
+          return <Card film={el} key={el.id} addRatedMovies={addRatedMovies} current={current} genresId={genres} />;
         });
         return elementCard;
       }}

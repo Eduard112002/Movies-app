@@ -25,6 +25,7 @@ export default class MoviesAll extends Component {
     search: true,
     rated: false,
     pageRated: null,
+    genres: [],
   };
 
   addListFilm = (results) => {
@@ -107,6 +108,7 @@ export default class MoviesAll extends Component {
 
   async componentDidMount() {
     const { current, title } = this.state;
+    await this.server.getGenres().then((res) => this.setState({ genres: res }));
     await this.server.createGuestSession();
     await this.server.getId();
     await this.addLIstServers(current, title);
@@ -123,7 +125,8 @@ export default class MoviesAll extends Component {
       .catch(() => this.addError());
   }
   render() {
-    const { listFilm, current, error, isOnline, loading, title, search, rated, ratedMovies, pageRated } = this.state;
+    const { listFilm, current, error, isOnline, loading, title, search, rated, ratedMovies, pageRated, genres } =
+      this.state;
     const contentsListMovie = rated ? ratedMovies : listFilm;
     const totalList = contentsListMovie.length < 20 ? current * 10 : null;
     const newTitle = `There is no such movie: ${title}`;
@@ -152,7 +155,7 @@ export default class MoviesAll extends Component {
     const content = error || isOnline || loading ? null : constentList;
     return (
       <>
-        <ServerProvider value={this.server}>
+        <ServerProvider value={genres}>
           <Tabs addSearch={this.addSearch} addRated={this.addRated} search={search} rated={rated} />
           {inputSearch}
           <div className="movies_card">
