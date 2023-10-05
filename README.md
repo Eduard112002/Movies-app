@@ -1,1 +1,1 @@
-https://movies-k1wy6c0pp-barelis-mailru.vercel.app 
+https://movies-x52g7mfhh-barelis-mailru.vercel.app/
